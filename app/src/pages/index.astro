@@ -1,0 +1,959 @@
+---
+import Layout from '../layouts/Layout.astro';
+import exhibitData from '../data/exhibit.json';
+---
+
+<Layout title="Simulated Subjects — The Uniformity Problem">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-kicker">An Interactive Exhibit</p>
+      <h1>The Mirror Warps</h1>
+      <p class="hero-sub">AI can simulate human perspectives.<br/>But the reflection is not what you'd expect.</p>
+    </div>
+  </section>
+
+  <!-- CONTEXT -->
+  <section class="context">
+    <div class="container">
+      <div class="context-card">
+        <p>When researchers ask large language models to adopt a persona — a conservative from Georgia, a liberal from Portland — the AI produces convincing responses. But ask it the <em>same question 50 times</em> as the same persona, and something becomes clear:</p>
+        <p class="context-highlight">Real humans disagree with each other. AI doesn't.</p>
+        <p class="context-source">Below, you'll see this for yourself. Your AI responses will be compared to real survey data from the <strong>General Social Survey (GSS) 2022</strong>, one of the longest-running studies of American public opinion.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIMENT -->
+  <section class="experiment" id="experiment">
+    <div class="container">
+      <div class="step-header">
+        <span class="step-number">01</span>
+        <h2>Choose a Persona</h2>
+        <p class="step-desc">Who should the AI pretend to be?</p>
+      </div>
+
+      <div class="persona-grid" id="persona-grid">
+        {exhibitData.personas.map((p) => (
+          <button
+            class="persona-card"
+            data-persona-id={p.id}
+            data-persona-prompt={p.prompt}
+            data-persona-ideology={p.reference_ideology}
+            data-persona-color={p.color}
+          >
+            <span class="persona-name">{p.shortName}</span>
+            <span class="persona-full">{p.name}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="step-header step-hidden" id="step-question">
+        <span class="step-number">02</span>
+        <h2>Pick a Question</h2>
+        <p class="step-desc">From the General Social Survey (GSS 2022)</p>
+      </div>
+
+      <div class="question-grid step-hidden" id="question-grid">
+        {exhibitData.questions.map((q) => (
+          <button
+            class="question-card"
+            data-question-id={q.id}
+            data-question-text={q.text}
+            data-question-options={JSON.stringify(q.options)}
+            data-question-distributions={JSON.stringify(q.distributions)}
+          >
+            <span class="question-text">"{q.text}"</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="step-header step-hidden" id="step-answer">
+        <span class="step-number">03</span>
+        <h2>What's <em>Your</em> Answer?</h2>
+        <p class="step-desc" id="chosen-question-text"></p>
+      </div>
+
+      <div class="answer-grid step-hidden" id="answer-grid">
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results step-hidden" id="results-section">
+    <div class="container">
+      <div class="results-header">
+        <div>
+          <h2>50 AI Responses Incoming</h2>
+          <p class="results-sub">The same persona. The same question. Fifty times.</p>
+        </div>
+        <div class="results-counter">
+          <span class="counter-num" id="response-count">0</span>
+          <span class="counter-label">/ 50</span>
+        </div>
+      </div>
+
+      <div class="results-body">
+        <div class="feed-panel">
+          <div class="feed-header">
+            <span class="feed-dot" id="feed-dot"></span>
+            <span>Live AI Responses</span>
+          </div>
+          <div class="feed-scroll" id="feed-scroll"></div>
+        </div>
+
+        <div class="charts-panel">
+          <div class="chart-container">
+            <div class="chart-label">
+              <span class="chart-label-dot ai-dot"></span>
+              AI Persona <span class="chart-label-detail" id="ai-chart-detail">(0 responses)</span>
+            </div>
+            <div class="chart-wrapper" id="ai-chart"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-label">
+              <span class="chart-label-dot human-dot"></span>
+              Real Humans <span class="chart-label-detail" id="human-chart-detail">(GSS 2022)</span>
+            </div>
+            <div class="chart-wrapper" id="human-chart"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-legend step-hidden" id="results-legend">
+        <div class="legend-item">
+          <span class="legend-swatch visitor-swatch"></span>
+          <span>Your answer</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="closing step-hidden" id="closing-section">
+    <div class="container">
+      <div class="closing-card">
+        <p class="closing-text">What you just witnessed is <strong>uniformity</strong> — one of nine systematic distortions identified in current AI models. Real people within the same demographic hold diverse, even contradictory opinions. The AI collapses that diversity into a narrow consensus that never existed.</p>
+        <p class="closing-text">The mirror reflects <em>something</em>, but it smooths away the texture of real human disagreement.</p>
+        <p class="closing-cite">Based on "Simulating Subjects: The Promise and Peril of AI Stand-Ins for Social Agents and Interactions" by Austin C. Kozlowski and James A. Evans, University of Chicago.</p>
+      </div>
+      <button class="reset-btn" id="reset-btn">Try Again</button>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Human data: General Social Survey 2022, NORC at the University of Chicago. AI model: Claude Haiku (Anthropic).</p>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(180deg, #f5f5f4 0%, var(--color-bg) 100%);
+  }
+  .hero-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .context {
+    padding: 4rem 0;
+  }
+  .context-card {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .context-card p {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--color-text);
+    margin-bottom: 1.2rem;
+  }
+  .context-highlight {
+    font-size: 1.4rem !important;
+    font-weight: 600;
+    color: var(--color-text) !important;
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin: 1.5rem 0 !important;
+  }
+  .context-source {
+    font-size: 0.95rem !important;
+    color: var(--color-text-muted) !important;
+    font-family: var(--font-sans) !important;
+  }
+  .experiment {
+    padding: 4rem 0 2rem;
+  }
+  .step-header {
+    margin-bottom: 1.5rem;
+    margin-top: 3rem;
+  }
+  .step-header:first-child {
+    margin-top: 0;
+  }
+  .step-number {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .step-header h2 {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .step-desc {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+  .persona-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.2rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-family: var(--font-sans);
+  }
+  .persona-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .persona-card.selected {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+  }
+  .persona-name {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .persona-full {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+  .question-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+  .question-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.2rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: var(--font-sans);
+  }
+  .question-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .question-card.selected {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
+  }
+  .question-text {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+  .answer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .step-hidden {
+    display: none !important;
+  }
+  .results {
+    padding: 3rem 0;
+    background: #f5f5f4;
+    min-height: 500px;
+  }
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .results-header h2 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .results-sub {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+  }
+  .results-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 0.1rem;
+  }
+  .counter-num {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-ai);
+  }
+  .counter-label {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+  .results-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .feed-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .feed-header {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .feed-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-ai);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .feed-dot.feed-done {
+    background: var(--color-human);
+    animation: none;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .feed-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+  }
+  .charts-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .chart-container {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem 0.8rem;
+  }
+  .chart-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .chart-label-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ai-dot { background: var(--color-ai); }
+  .human-dot { background: var(--color-human); }
+  .chart-label-detail {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .chart-wrapper {
+    min-height: 260px;
+  }
+  .results-legend {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+  .visitor-swatch { background: var(--color-visitor); }
+  .closing {
+    padding: 5rem 0 3rem;
+  }
+  .closing-card {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .closing-text {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+  }
+  .closing-cite {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    margin-top: 2rem;
+    font-style: italic;
+  }
+  .reset-btn {
+    display: block;
+    margin: 2.5rem auto 0;
+    padding: 0.8rem 2.5rem;
+    background: var(--color-text);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .reset-btn:hover {
+    opacity: 0.85;
+  }
+  .site-footer {
+    padding: 2rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .site-footer p {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+  }
+  @media (max-width: 768px) {
+    .results-body {
+      grid-template-columns: 1fr;
+    }
+    .charts-panel {
+      grid-template-columns: 1fr;
+    }
+    .feed-scroll {
+      max-height: 200px;
+    }
+    .persona-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .question-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import * as d3 from 'd3';
+
+  const PROXY_URL = 'https://simulated-subjects-proxy.YOUR_SUBDOMAIN.workers.dev';
+  const NUM_REQUESTS = 50;
+
+  interface Persona {
+    id: string;
+    prompt: string;
+    ideology: string;
+    color: string;
+  }
+
+  interface Question {
+    id: string;
+    text: string;
+    options: string[];
+    distributions: Record<string, { n: number; data: Record<string, number> }>;
+  }
+
+  let selectedPersona: Persona | null = null;
+  let selectedQuestion: Question | null = null;
+  let visitorAnswer: string | null = null;
+  let aiResponses: string[] = [];
+  let isRunning = false;
+
+  const $ = (sel: string) => document.querySelector(sel)!;
+  const $$ = (sel: string) => document.querySelectorAll(sel);
+
+  const stepQuestion = $('#step-question') as HTMLElement;
+  const questionGrid = $('#question-grid') as HTMLElement;
+  const stepAnswer = $('#step-answer') as HTMLElement;
+  const answerGrid = $('#answer-grid') as HTMLElement;
+  const chosenQuestionText = $('#chosen-question-text') as HTMLElement;
+  const resultsSection = $('#results-section') as HTMLElement;
+  const feedScroll = $('#feed-scroll') as HTMLElement;
+  const responseCountEl = $('#response-count') as HTMLElement;
+  const aiChartEl = $('#ai-chart') as HTMLElement;
+  const humanChartEl = $('#human-chart') as HTMLElement;
+  const aiChartDetail = $('#ai-chart-detail') as HTMLElement;
+  const humanChartDetail = $('#human-chart-detail') as HTMLElement;
+  const resultsLegend = $('#results-legend') as HTMLElement;
+  const closingSection = $('#closing-section') as HTMLElement;
+  const resetBtn = $('#reset-btn') as HTMLElement;
+  const feedDot = $('#feed-dot') as HTMLElement;
+
+  // --- Persona selection ---
+  $$('.persona-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      if (isRunning) return;
+      $$('.persona-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const el = card as HTMLElement;
+      selectedPersona = {
+        id: el.dataset.personaId!,
+        prompt: el.dataset.personaPrompt!,
+        ideology: el.dataset.personaIdeology!,
+        color: el.dataset.personaColor!,
+      };
+      show(stepQuestion);
+      show(questionGrid);
+      stepQuestion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // --- Question selection ---
+  $$('.question-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      if (isRunning) return;
+      $$('.question-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const el = card as HTMLElement;
+      selectedQuestion = {
+        id: el.dataset.questionId!,
+        text: el.dataset.questionText!,
+        options: JSON.parse(el.dataset.questionOptions!),
+        distributions: JSON.parse(el.dataset.questionDistributions!),
+      };
+      chosenQuestionText.textContent = `"${selectedQuestion.text}"`;
+      renderAnswerButtons(selectedQuestion.options);
+      show(stepAnswer);
+      show(answerGrid);
+      stepAnswer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  function renderAnswerButtons(options: string[]) {
+    answerGrid.innerHTML = '';
+    options.forEach((opt) => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = opt;
+      btn.style.cssText = `
+        background: var(--color-surface);
+        border: 2px solid var(--color-border);
+        border-radius: 6px;
+        padding: 0.7rem 1.2rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-family: var(--font-sans);
+        font-weight: 500;
+        transition: all 0.2s;
+      `;
+      btn.addEventListener('mouseenter', () => {
+        if (!btn.classList.contains('selected')) {
+          btn.style.borderColor = 'var(--color-visitor)';
+          btn.style.background = 'var(--color-visitor-light)';
+        }
+      });
+      btn.addEventListener('mouseleave', () => {
+        if (!btn.classList.contains('selected')) {
+          btn.style.borderColor = 'var(--color-border)';
+          btn.style.background = 'var(--color-surface)';
+        }
+      });
+      btn.addEventListener('click', () => {
+        if (isRunning) return;
+        answerGrid.querySelectorAll('.answer-btn').forEach((b: any) => {
+          b.classList.remove('selected');
+          b.style.borderColor = 'var(--color-border)';
+          b.style.background = 'var(--color-surface)';
+          b.style.color = 'var(--color-text)';
+        });
+        btn.classList.add('selected');
+        btn.style.borderColor = 'var(--color-visitor)';
+        btn.style.background = 'var(--color-visitor)';
+        btn.style.color = 'white';
+        visitorAnswer = opt;
+        startExperiment();
+      });
+      answerGrid.appendChild(btn);
+    });
+  }
+
+  // --- Experiment ---
+  async function startExperiment() {
+    if (isRunning || !selectedPersona || !selectedQuestion || !visitorAnswer) return;
+    isRunning = true;
+    aiResponses = [];
+    feedScroll.innerHTML = '';
+    responseCountEl.textContent = '0';
+    feedDot.classList.remove('feed-done');
+
+    show(resultsSection);
+    setTimeout(() => {
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+
+    const options = selectedQuestion.options;
+    const ideology = selectedPersona.ideology;
+    const humanDist = selectedQuestion.distributions[ideology] || selectedQuestion.distributions.overall;
+
+    humanChartDetail.textContent = `(GSS 2022, n=${humanDist.n}, ${ideology})`;
+    initChart(humanChartEl, options, humanDist.data, 'human', visitorAnswer);
+    initChart(aiChartEl, options, null, 'ai', visitorAnswer);
+
+    const systemPrompt = `${selectedPersona.prompt}\n\nYou are being surveyed. You must respond with ONLY one of the following options. Do not explain your answer. Do not add any text before or after. Just respond with the exact option text.\n\nOptions:\n${options.map((o: string) => `- ${o}`).join('\n')}`;
+    const userPrompt = `Survey question: "${selectedQuestion.text}"\n\nYour response (pick exactly one option):`;
+
+    const promises = Array.from({ length: NUM_REQUESTS }, (_, i) =>
+      fetchAIResponse(systemPrompt, userPrompt, options, i)
+    );
+
+    await Promise.allSettled(promises);
+
+    isRunning = false;
+    feedDot.classList.add('feed-done');
+    show(closingSection);
+    show(resultsLegend);
+    setTimeout(() => {
+      closingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 500);
+  }
+
+  async function fetchAIResponse(systemPrompt: string, userPrompt: string, options: string[], _index: number) {
+    try {
+      const res = await fetch(PROXY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 50,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userPrompt }],
+        }),
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const text = (data.content?.[0]?.text || '').trim();
+      const matched = matchOption(text, options);
+
+      if (!matched) {
+        addFeedItem(`[discarded] "${text}"`, true);
+        return;
+      }
+
+      aiResponses.push(matched);
+      responseCountEl.textContent = String(aiResponses.length);
+      aiChartDetail.textContent = `(${aiResponses.length} responses)`;
+      addFeedItem(matched, false);
+      updateAIChart(aiChartEl, selectedQuestion!.options, aiResponses, visitorAnswer!);
+    } catch (err) {
+      // silently skip failed requests
+    }
+  }
+
+  function matchOption(text: string, options: string[]): string | null {
+    const lower = text.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+    for (const opt of options) {
+      const optLower = opt.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      if (lower === optLower || lower.startsWith(optLower) || optLower.startsWith(lower)) {
+        return opt;
+      }
+    }
+    return null;
+  }
+
+  function addFeedItem(text: string, isError: boolean) {
+    feedScroll.querySelectorAll('.feed-fresh').forEach(el => el.classList.remove('feed-fresh'));
+    const item = document.createElement('div');
+    item.style.cssText = `
+      padding: 0.3rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: ${isError ? '#b91c1c' : 'var(--color-text)'};
+      border-left: 3px solid ${isError ? 'transparent' : 'var(--color-ai)'};
+      background: ${isError ? 'transparent' : 'var(--color-ai-light)'};
+      animation: feedIn 0.3s ease-out;
+    `;
+    item.className = isError ? '' : 'feed-fresh';
+    item.textContent = text;
+    feedScroll.prepend(item);
+
+    // Fade previous items
+    setTimeout(() => {
+      item.style.background = 'transparent';
+      item.style.borderLeftColor = 'transparent';
+      item.style.color = 'var(--color-text-muted)';
+    }, 600);
+  }
+
+  // --- D3 Charts ---
+  const MARGIN = { top: 8, right: 12, bottom: 65, left: 44 };
+  const CHART_H = 260;
+
+  function initChart(
+    container: HTMLElement,
+    options: string[],
+    distData: Record<string, number> | null,
+    type: 'ai' | 'human',
+    vAnswer: string | null
+  ) {
+    container.innerHTML = '';
+    const width = container.clientWidth || 360;
+    const iW = width - MARGIN.left - MARGIN.right;
+    const iH = CHART_H - MARGIN.top - MARGIN.bottom;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', CHART_H);
+
+    const g = svg.append('g')
+      .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+
+    const x = d3.scaleBand().domain(options).range([0, iW]).padding(0.25);
+    const maxY = distData ? Math.max(...Object.values(distData), 10) * 1.2 : 105;
+    const y = d3.scaleLinear().domain([0, maxY]).range([iH, 0]);
+
+    // X axis
+    g.append('g')
+      .attr('transform', `translate(0,${iH})`)
+      .call(d3.axisBottom(x).tickSize(0))
+      .call((sel: any) => sel.select('.domain').remove())
+      .selectAll('text')
+      .attr('font-size', '9px')
+      .attr('font-family', 'IBM Plex Sans, sans-serif')
+      .attr('fill', '#78716c')
+      .attr('transform', 'rotate(-30)')
+      .attr('text-anchor', 'end')
+      .attr('dx', '-0.3em')
+      .attr('dy', '0.6em');
+
+    // Y grid
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat((d: any) => `${d}%`).tickSize(-iW))
+      .call((sel: any) => {
+        sel.select('.domain').remove();
+        sel.selectAll('.tick line').attr('stroke', '#e7e5e4').attr('stroke-dasharray', '2,2');
+        sel.selectAll('.tick text').attr('font-size', '9px').attr('font-family', 'IBM Plex Mono, monospace').attr('fill', '#a8a29e');
+      });
+
+    const color = type === 'ai' ? '#2563eb' : '#16a34a';
+
+    // Bars
+    g.selectAll('.bar')
+      .data(options)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d: string) => x(d)!)
+      .attr('width', x.bandwidth())
+      .attr('y', (d: string) => distData ? y(distData[d] || 0) : iH)
+      .attr('height', (d: string) => distData ? iH - y(distData[d] || 0) : 0)
+      .attr('fill', color)
+      .attr('rx', 2)
+      .attr('opacity', 0.85);
+
+    // Labels
+    if (distData) {
+      g.selectAll('.bar-label')
+        .data(options)
+        .enter()
+        .append('text')
+        .attr('class', 'bar-label')
+        .attr('x', (d: string) => x(d)! + x.bandwidth() / 2)
+        .attr('y', (d: string) => y(distData[d] || 0) - 5)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '9px')
+        .attr('font-family', 'IBM Plex Mono, monospace')
+        .attr('fill', '#78716c')
+        .text((d: string) => `${(distData[d] || 0).toFixed(1)}%`);
+    }
+
+    // Visitor marker
+    if (vAnswer && options.includes(vAnswer)) {
+      const mx = x(vAnswer)! + x.bandwidth() / 2;
+      g.append('line')
+        .attr('x1', mx).attr('x2', mx)
+        .attr('y1', 0).attr('y2', iH)
+        .attr('stroke', '#dc2626')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '4,3')
+        .attr('opacity', 0.7);
+      g.append('text')
+        .attr('x', mx).attr('y', -2)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '8px')
+        .attr('font-family', 'IBM Plex Mono, monospace')
+        .attr('fill', '#dc2626')
+        .attr('font-weight', '600')
+        .text('YOU');
+    }
+  }
+
+  function updateAIChart(container: HTMLElement, options: string[], responses: string[], _vAnswer: string) {
+    const width = container.clientWidth || 360;
+    const iW = width - MARGIN.left - MARGIN.right;
+    const iH = CHART_H - MARGIN.top - MARGIN.bottom;
+
+    const total = responses.length;
+    const counts: Record<string, number> = {};
+    options.forEach(o => counts[o] = 0);
+    responses.forEach(r => { if (counts[r] !== undefined) counts[r]++; });
+
+    const pct: Record<string, number> = {};
+    options.forEach(o => pct[o] = total > 0 ? (counts[o] / total) * 100 : 0);
+
+    const maxY = Math.max(105, ...Object.values(pct)) * 1.05;
+    const x = d3.scaleBand().domain(options).range([0, iW]).padding(0.25);
+    const y = d3.scaleLinear().domain([0, maxY]).range([iH, 0]);
+
+    const svg = d3.select(container).select('svg g');
+
+    svg.selectAll<SVGRectElement, string>('.bar')
+      .data(options)
+      .transition()
+      .duration(300)
+      .ease(d3.easeCubicOut)
+      .attr('y', (d: string) => y(pct[d]))
+      .attr('height', (d: string) => iH - y(pct[d]));
+
+    // Labels
+    const labels = svg.selectAll<SVGTextElement, string>('.bar-label').data(options);
+
+    labels.enter()
+      .append('text')
+      .attr('class', 'bar-label')
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '9px')
+      .attr('font-family', 'IBM Plex Mono, monospace')
+      .attr('fill', '#78716c')
+      .merge(labels)
+      .transition()
+      .duration(300)
+      .attr('x', (d: string) => x(d)! + x.bandwidth() / 2)
+      .attr('y', (d: string) => y(pct[d]) - 5)
+      .text((d: string) => total > 0 ? `${pct[d].toFixed(1)}%` : '');
+  }
+
+  // --- Helpers ---
+  function show(el: HTMLElement) {
+    el.classList.remove('step-hidden');
+  }
+  function hide(el: HTMLElement) {
+    el.classList.add('step-hidden');
+  }
+
+  // --- Reset ---
+  resetBtn.addEventListener('click', () => {
+    selectedPersona = null;
+    selectedQuestion = null;
+    visitorAnswer = null;
+    aiResponses = [];
+    isRunning = false;
+
+    $$('.persona-card').forEach(c => c.classList.remove('selected'));
+    $$('.question-card').forEach(c => c.classList.remove('selected'));
+    answerGrid.innerHTML = '';
+
+    hide(stepQuestion);
+    hide(questionGrid);
+    hide(stepAnswer);
+    hide(answerGrid);
+    hide(resultsSection);
+    hide(closingSection);
+    hide(resultsLegend);
+
+    feedScroll.innerHTML = '';
+    aiChartEl.innerHTML = '';
+    humanChartEl.innerHTML = '';
+    responseCountEl.textContent = '0';
+
+    document.querySelector('.hero')?.scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+<style is:global>
+  @keyframes feedIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

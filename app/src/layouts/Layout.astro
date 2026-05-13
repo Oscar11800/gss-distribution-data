@@ -1,0 +1,76 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An interactive exhibit exploring how AI simulates human perspectives — and where the mirror warps." />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --color-bg: #fafaf9;
+    --color-surface: #ffffff;
+    --color-text: #1c1917;
+    --color-text-muted: #78716c;
+    --color-text-light: #a8a29e;
+    --color-border: #e7e5e4;
+    --color-border-strong: #d6d3d1;
+    --color-accent: #2563eb;
+    --color-accent-light: #dbeafe;
+    --color-human: #16a34a;
+    --color-human-light: #dcfce7;
+    --color-ai: #2563eb;
+    --color-ai-light: #dbeafe;
+    --color-visitor: #dc2626;
+    --color-visitor-light: #fee2e2;
+
+    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-serif: 'IBM Plex Serif', Georgia, serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+
+    --max-width: 1100px;
+    --section-gap: 6rem;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+  }
+</style>

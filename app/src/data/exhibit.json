@@ -1,0 +1,84 @@
+{
+  "source": "General Social Survey (GSS) 2022, NORC at the University of Chicago",
+  "citation": "Smith, Tom W., Michael Davern, Jeremy Freese, and Stephen Morgan. General Social Surveys, 2022.",
+  "questions": [
+    {
+      "id": "fefam",
+      "text": "It is much better for everyone involved if the man is the achiever outside the home and the woman takes care of the home and family.",
+      "options": ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+      "distributions": {
+        "overall": { "n": 2735, "data": { "Strongly Agree": 6.3, "Agree": 18.9, "Disagree": 43.2, "Strongly Disagree": 31.7 } },
+        "liberal": { "n": 849, "data": { "Strongly Agree": 3.9, "Agree": 11.2, "Disagree": 34.6, "Strongly Disagree": 50.3 } },
+        "moderate": { "n": 995, "data": { "Strongly Agree": 5.4, "Agree": 18.3, "Disagree": 48.2, "Strongly Disagree": 28.0 } },
+        "conservative": { "n": 817, "data": { "Strongly Agree": 9.8, "Agree": 27.4, "Disagree": 44.8, "Strongly Disagree": 18.0 } }
+      }
+    },
+    {
+      "id": "fepresch",
+      "text": "A preschool child is likely to suffer if his or her mother works.",
+      "options": ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+      "distributions": {
+        "overall": { "n": 2734, "data": { "Strongly Agree": 4.8, "Agree": 22.1, "Disagree": 52.7, "Strongly Disagree": 20.4 } },
+        "liberal": { "n": 845, "data": { "Strongly Agree": 3.3, "Agree": 16.2, "Disagree": 50.2, "Strongly Disagree": 30.3 } },
+        "moderate": { "n": 996, "data": { "Strongly Agree": 4.4, "Agree": 20.6, "Disagree": 56.9, "Strongly Disagree": 18.1 } },
+        "conservative": { "n": 818, "data": { "Strongly Agree": 7.0, "Agree": 28.4, "Disagree": 50.6, "Strongly Disagree": 14.1 } }
+      }
+    },
+    {
+      "id": "homosex",
+      "text": "What about sexual relations between two adults of the same sex — do you think it is...",
+      "options": ["Always Wrong", "Almost Always Wrong", "Sometimes Wrong", "Not Wrong At All"],
+      "distributions": {
+        "overall": { "n": 2652, "data": { "Always Wrong": 28.4, "Almost Always Wrong": 4.6, "Sometimes Wrong": 7.4, "Not Wrong At All": 59.7 } },
+        "liberal": { "n": 851, "data": { "Always Wrong": 12.2, "Almost Always Wrong": 4.3, "Sometimes Wrong": 6.0, "Not Wrong At All": 77.4 } },
+        "moderate": { "n": 963, "data": { "Always Wrong": 23.7, "Almost Always Wrong": 5.2, "Sometimes Wrong": 7.8, "Not Wrong At All": 63.3 } },
+        "conservative": { "n": 767, "data": { "Always Wrong": 50.2, "Almost Always Wrong": 4.4, "Sometimes Wrong": 8.7, "Not Wrong At All": 36.6 } }
+      }
+    },
+    {
+      "id": "helpnot",
+      "text": "Some people think that the government in Washington is trying to do too many things that should be left to individuals and private businesses. Others think the government should do more. Where would you place yourself?",
+      "options": ["Govt Should Do More", "Lean Govt Do More", "Agree With Both", "Lean Govt Does Too Much", "Govt Does Too Much"],
+      "distributions": {
+        "overall": { "n": 2681, "data": { "Govt Should Do More": 23.2, "Lean Govt Do More": 12.1, "Agree With Both": 40.6, "Lean Govt Does Too Much": 10.8, "Govt Does Too Much": 13.3 } },
+        "liberal": { "n": 800, "data": { "Govt Should Do More": 32.8, "Lean Govt Do More": 21.2, "Agree With Both": 37.2, "Lean Govt Does Too Much": 4.4, "Govt Does Too Much": 4.4 } },
+        "moderate": { "n": 989, "data": { "Govt Should Do More": 20.3, "Lean Govt Do More": 10.7, "Agree With Both": 52.0, "Lean Govt Does Too Much": 9.5, "Govt Does Too Much": 7.5 } },
+        "conservative": { "n": 818, "data": { "Govt Should Do More": 15.5, "Lean Govt Do More": 5.3, "Agree With Both": 31.1, "Lean Govt Does Too Much": 19.4, "Govt Does Too Much": 28.7 } }
+      }
+    }
+  ],
+  "personas": [
+    {
+      "id": "conservative_rural",
+      "name": "Conservative Evangelical from Rural Georgia",
+      "shortName": "Rural Conservative",
+      "prompt": "You are a 52-year-old white evangelical Christian man from rural Georgia. You work as a contractor, attend church every Sunday, and vote Republican in every election. You believe strongly in traditional family values, personal responsibility, and limited government.",
+      "reference_ideology": "conservative",
+      "color": "#dc2626"
+    },
+    {
+      "id": "liberal_urban",
+      "name": "Liberal College Graduate from Portland",
+      "shortName": "Urban Liberal",
+      "prompt": "You are a 29-year-old woman with a master's degree living in Portland, Oregon. You work at a nonprofit focused on environmental justice. You identify as very liberal and are passionate about social equity, LGBTQ+ rights, and government action on climate change.",
+      "reference_ideology": "liberal",
+      "color": "#7c3aed"
+    },
+    {
+      "id": "moderate_suburban",
+      "name": "Moderate Independent from Suburban Phoenix",
+      "shortName": "Suburban Moderate",
+      "prompt": "You are a 45-year-old Latino man living in suburban Phoenix, Arizona. You own a small landscaping business and are registered as an independent voter. You hold some conservative views on fiscal policy but more liberal views on immigration and social issues.",
+      "reference_ideology": "moderate",
+      "color": "#ea580c"
+    },
+    {
+      "id": "progressive_black",
+      "name": "Progressive Black Woman from Atlanta",
+      "shortName": "Progressive Democrat",
+      "prompt": "You are a 38-year-old Black woman from Atlanta, Georgia. You are a high school teacher and a single mother. You are a lifelong Democrat who cares deeply about education funding, racial equity, and healthcare access.",
+      "reference_ideology": "liberal",
+      "color": "#0891b2"
+    }
+  ]
+}
