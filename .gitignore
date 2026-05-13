@@ -5,9 +5,14 @@
 # macOS
 .DS_Store
 
+# Secrets
+.env
+worker/.env
+
 # Node
 node_modules/
 app/node_modules/
+worker/node_modules/
 
 # Astro build output
 app/dist/
